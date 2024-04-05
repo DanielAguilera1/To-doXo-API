@@ -1,50 +1,72 @@
-package com.dnxo.todoxo.domain.service;
-
-import com.dnxo.todoxo.domain.Task;
-import com.dnxo.todoxo.persistence.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+package com.dnxo.todoxo.service;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.dnxo.todoxo.persistence.dto.TaskDTO;
+import com.dnxo.todoxo.persistence.mapper.TaskMapper;
+import com.dnxo.todoxo.persistence.repository.TaskRepository;
+import com.dnxo.todoxo.service.dto.task.TaskDto;
+
 @Service
 public class TaskService {
     @Autowired
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
+    @Autowired
+    private final TaskMapper mapper;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, TaskMapper mapper) {
         this.taskRepository = taskRepository;
+        this.mapper = mapper;
     }
 
-    public List<Task> getAll() {
-        return taskRepository.getAll();
+    public List<TaskDTO> getAll() {
+        return mapper.toTasksDTO(this.taskRepository.findAll());
     }
 
-    public Optional<Task> getTaskById (int taskId) {
-        return taskRepository.getTaskById(taskId);
+    public Optional<TaskDTO> getTaskById(int taskId) {
+        return Optional.of(this.mapper.toTaskDTO(this.taskRepository.findById(taskId)
+                .orElse(null)));
     }
 
-    public Optional<List<Task>> getTasksByUser(int userId) {
-        return taskRepository.getTasksByUser(userId);
+    public Optional<List<TaskDTO>> getTasksByUser(int userId) {
+        return Optional.of(this.mapper.toTasksDTO(this.taskRepository.findByUserId(userId)
+                .orElse(null)));
     }
 
-    public Optional<List<Task>> getTasksByUserCompleted(int userId) {
-        return taskRepository.getTasksByUserCompleted(userId);
+    public Optional<List<TaskDTO>> getTasksByUserCompleted(int userId) {
+        return Optional.of(this.mapper.toTasksDTO(this.taskRepository.findByUserIdAndState(userId, true)
+                .orElse(null)));
     }
 
-    public Optional<List<Task>> getTasksByUserPending(int userId) {
-        return taskRepository.getTasksByUserPending(userId);
+    public Optional<List<TaskDTO>> getTasksByUserPending(int userId) {
+        return Optional.of(this.mapper.toTasksDTO(this.taskRepository.findByUserIdAndState(userId, false)
+                .orElse(null)));
     }
 
-    public Task save (Task task) {
-        return taskRepository.save(task);
+    public TaskDTO save(TaskDTO taskDTO) {
+        return mapper.toTaskDTO(this.taskRepository.save(mapper.toTaskEntity(taskDTO)));
     }
 
-    public boolean delete(int taskId) {
-       return getTaskById(taskId).map(task -> {
-           taskRepository.delete(taskId);
-           return true;
-       }).orElse(false);
+    public boolean exists(int taskId) {
+        return this.taskRepository.existsById(taskId);
     }
+
+    public boolean existsByUserIdAndTaskId(int userId, int taskId) {
+        return this.taskRepository.existsByUserIdAndTaskId(userId, taskId);
+    }
+
+    @Transactional
+    public void updateTask(TaskDto dto) {
+        this.taskRepository.updateTask(dto);
+    }
+
+    public void delete(int taskId) {
+        this.taskRepository.deleteById(taskId);
+    }
+
 }

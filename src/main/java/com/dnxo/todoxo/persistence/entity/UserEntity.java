@@ -1,56 +1,39 @@
 package com.dnxo.todoxo.persistence.entity;
 
-import jakarta.persistence.*;
-
 import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-public class Usuario {
+@Getter
+@Setter
+@NoArgsConstructor
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Integer userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 120)
+    private String email;
+
+    @Column(nullable = false, length = 74)
     private String password;
 
-    @OneToMany(mappedBy = "usuario")
-    private List<Tarea> tareas;
+    @OneToMany(mappedBy = "userEntity")
+    private List<TaskEntity> taskEntities;
 
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Tarea> getTareas() {
-        return tareas;
-    }
-
-    public void setTareas(List<Tarea> tareas) {
-        this.tareas = tareas;
-    }
 }

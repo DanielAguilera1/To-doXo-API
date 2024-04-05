@@ -1,80 +1,36 @@
 package com.dnxo.todoxo.persistence.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tasks")
-public class Tarea {
+@Getter
+@Setter
+@NoArgsConstructor
+public class TaskEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "task_id", nullable = false)
+    @Column(name = "task_id")
     private Integer taskId;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String description;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "timestamp")
     private LocalDateTime date;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean")
     private Boolean state;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false, nullable = false)
-    private Usuario usuario;
-
-    // Getters & Setters
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Integer getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(Integer taskId) {
-        this.taskId = taskId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public Boolean getState() {
-        return state;
-    }
-
-    public void setState(Boolean state) {
-        this.state = state;
-    }
+    private UserEntity userEntity;
 }
