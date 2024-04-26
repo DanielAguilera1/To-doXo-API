@@ -1,6 +1,6 @@
 package com.dnxo.todoxo.persistence.dto;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +9,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDTO {
-    private int userId;
+public class UserRoleDTO {
     private String username;
-    private List<UserRoleDTO> roles;
-    private List<TaskDTO> tasks;
+    private String role;
+    private LocalDateTime grantedDate;
 }

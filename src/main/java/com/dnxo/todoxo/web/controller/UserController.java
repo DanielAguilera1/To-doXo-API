@@ -45,7 +45,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<Boolean> login(@RequestBody LoginUsersDto dto) {
-        return new ResponseEntity<>(this.userService.loginUser(dto), HttpStatus.OK);
+        return new ResponseEntity<Boolean>(this.userService.loginUser(dto), HttpStatus.OK);
     }
 
     @GetMapping("/tasks/{id}")
@@ -57,10 +57,9 @@ public class UserController {
     }
 
     @PatchMapping("/password")
-    public ResponseEntity<Void> changePassword(@RequestBody UpdatePasswordDto dto) {
+    public ResponseEntity<Boolean> changePassword(@RequestBody UpdatePasswordDto dto) {
         if (this.userService.existsByUserIdAndEmail(dto.getId(), dto.getEmail())) {
-            this.userService.changePassword(dto);
-            return ResponseEntity.ok().build();
+            return new ResponseEntity<Boolean>(this.userService.changePassword(dto), HttpStatus.OK);
         }
         return ResponseEntity.badRequest().build();
     }
